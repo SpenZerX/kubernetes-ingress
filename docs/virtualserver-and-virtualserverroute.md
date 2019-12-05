@@ -442,7 +442,7 @@ return:
 | `type` | The MIME type of the response. The default is `text/plain`. | `string` | No |
 | `body` | The body of the response. Supports NGINX variables*. Variables must be inclosed in curly brackets. For example: `Request is ${request_uri}\n`. | `string` | Yes |
 
-\* -- Supported NGINX variables: `$request_uri`, `$request_method`, `$request_body`, `$scheme`, `$http`_, `$args`, `$arg`_, `$cookie`_, `$host`, `$request_time`, `$request_length`, `$nginx_version`, `$pid`, `$connection`, `$remote_addr`, `$remote_port`, `$time_iso8601`, `$time_local`, `$server_addr`, `$server_port`, `$server_name`, `$server_protocol`, `$connections_active`, `$connections_reading`, `$connections_writing` and `$connections_waiting`.  
+\* -- Supported NGINX variables: `$request_uri`, `$request_method`, `$request_body`, `$scheme`, `$http_`, `$args`, `$arg_`, `$cookie_`, `$host`, `$request_time`, `$request_length`, `$nginx_version`, `$pid`, `$connection`, `$remote_addr`, `$remote_port`, `$time_iso8601`, `$time_local`, `$server_addr`, `$server_port`, `$server_name`, `$server_protocol`, `$connections_active`, `$connections_reading`, `$connections_writing` and `$connections_waiting`.
 
 ### Split
 

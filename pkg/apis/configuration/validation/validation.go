@@ -2,7 +2,6 @@ package validation
 
 import (
 	"fmt"
-	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -753,24 +752,18 @@ func validateSpecialVariable(nVar string, fieldPath *field.Path) field.ErrorList
 	allErrs := field.ErrorList{}
 	value := strings.SplitN(nVar, "_", 2)
 
-	if strings.HasPrefix(nVar, "arg") {
-		_, err := url.ParseQuery(fmt.Sprintf("%v=%v", value[0], value[1]))
-
-		if err != nil {
-			msg := fmt.Sprintf("%v contains an invalid arg name '%v', it must be a valid URL query parameter", nVar, value[1])
+	switch value[0] {
+	case "arg":
+		for _, msg := range isArgumentName(value[1]) {
 			allErrs = append(allErrs, field.Invalid(fieldPath, nVar, msg))
 		}
-	} else if strings.HasPrefix(nVar, "http") {
-		validationMsg := isValidSpecialVariableHeader(value[1])
-		if len(validationMsg) >= 1 {
-			msg := fmt.Sprintf("%v contains an invalid http header name '%v': %v", nVar, value[1], validationMsg)
-			allErrs = append(allErrs, field.Invalid(fieldPath.Child("name"), nVar, msg))
+	case "http":
+		for _, msg := range isValidSpecialVariableHeader(value[1]) {
+			allErrs = append(allErrs, field.Invalid(fieldPath, nVar, msg))
 		}
-	} else if strings.HasPrefix(nVar, "cookie") {
-		validationMsg := isCookieName(value[1])
-		if len(validationMsg) >= 1 {
-			msg := fmt.Sprintf("%v contains an invalid cookie name '%v': %v", nVar, value[1], validationMsg)
-			allErrs = append(allErrs, field.Invalid(fieldPath.Child("name"), nVar, msg))
+	case "cookie":
+		for _, msg := range isCookieName(value[1]) {
+			allErrs = append(allErrs, field.Invalid(fieldPath, nVar, msg))
 		}
 	}
 

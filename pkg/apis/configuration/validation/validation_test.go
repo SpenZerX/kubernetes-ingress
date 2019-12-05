@@ -2803,7 +2803,7 @@ func TestValidateActionReturnCodeFails(t *testing.T) {
 }
 
 func TestValidateSpecialVariable(t *testing.T) {
-	specialVars := []string{"arg_username", "arg_user_name", "http_header", "cookie_cookie_name"}
+	specialVars := []string{"arg_username", "arg_user_name", "http_header_name", "cookie_cookie_name"}
 	for _, v := range specialVars {
 		allErrs := validateSpecialVariable(v, field.NewPath("variable"))
 		if len(allErrs) != 0 {

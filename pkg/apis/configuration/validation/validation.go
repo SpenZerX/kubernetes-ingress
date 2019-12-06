@@ -741,6 +741,7 @@ func validateVariable(nVar string, validVars map[string]bool, fieldPath *field.P
 }
 
 func isValidSpecialVariableHeader(header string) []string {
+	// underscores in $http_ variable represent '-'.
 	errMsgs := validation.IsHTTPHeaderName(strings.Replace(header, "_", "-", -1))
 	if len(errMsgs) >= 1 || strings.Contains(header, "-") {
 		return []string{"a valid HTTP header must consist of alphanumeric characters or '_'"}
@@ -828,7 +829,7 @@ var returnBodyVariables = map[string]bool{
 	"connections_waiting": true,
 }
 
-var returnBodySpecialVariables = []string{"arg_, http_, cookie_"}
+var returnBodySpecialVariables = []string{"arg_", "http_", "cookie_"}
 
 func validateActionReturnBody(body string, fieldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}

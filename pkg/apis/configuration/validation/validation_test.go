@@ -2674,6 +2674,10 @@ func TestValidateActionReturnBody(t *testing.T) {
 			msg:  "string with symbols",
 		},
 		{
+			body: "${http_authorization}",
+			msg:  "special variable with name",
+		},
+		{
 			body: `
 				<html>
 				<body>
@@ -2715,6 +2719,107 @@ func TestValidateActionReturnBodyFails(t *testing.T) {
 		allErrs := validateActionReturnBody(test.body, field.NewPath("body"))
 		if len(allErrs) == 0 {
 			t.Errorf("validateActionReturnBody(%v) returned no errors for invalid input for the case of: %v", test.body, test.msg)
+		}
+	}
+}
+
+func TestValidateActionReturnType(t *testing.T) {
+	tests := []struct {
+		defaultType string
+		msg         string
+	}{
+		{
+			defaultType: "application/json",
+			msg:         "normal MIME type",
+		},
+		{
+			defaultType: `\"application/json\"`,
+			msg:         "double quotes escaped",
+		},
+	}
+
+	for _, test := range tests {
+		allErrs := validateActionReturnType(test.defaultType, field.NewPath("type"))
+		if len(allErrs) != 0 {
+			t.Errorf("validateActionReturnType(%v) returned errors %v for the case of: %v", test.defaultType, allErrs, test.msg)
+		}
+	}
+}
+
+func TestValidateActionReturnTypeFails(t *testing.T) {
+	tests := []struct {
+		defaultType string
+		msg         string
+	}{
+		{
+			defaultType: "application/{json}",
+			msg:         "use of forbidden symbols",
+		},
+		{
+			defaultType: "application;json",
+			msg:         "use of forbidden symbols",
+		},
+		{
+			defaultType: `"application/json"`,
+			msg:         "double quotes not escaped",
+		},
+	}
+
+	for _, test := range tests {
+		allErrs := validateActionReturnType(test.defaultType, field.NewPath("type"))
+		if len(allErrs) == 0 {
+			t.Errorf("validateActionReturnType(%v) returned no errors for the case of: %v", test.defaultType, test.msg)
+		}
+	}
+}
+
+func TestValidateActionReturn(t *testing.T) {
+	tests := []*v1.ActionReturn{
+		{
+			Body: "Hello World",
+		},
+		{
+			Type: "application/json",
+			Body: "Hello World",
+		},
+		{
+			Code: 200,
+			Type: "application/json",
+			Body: "Hello World",
+		},
+	}
+
+	for _, test := range tests {
+		allErrs := validateActionReturn(test, field.NewPath("return"))
+		if len(allErrs) != 0 {
+			t.Errorf("validateActionReturn(%v) returned errors for valid input", test)
+		}
+	}
+}
+
+func TestValidateActionReturnFails(t *testing.T) {
+	tests := []*v1.ActionReturn{
+		{},
+		{
+			Code: 301,
+			Body: "Hello World",
+		},
+		{
+			Code: 200,
+			Type: `application/"json"`,
+			Body: "Hello World",
+		},
+		{
+			Code: 200,
+			Type: `application/"json"`,
+			Body: "Hello World",
+		},
+	}
+
+	for _, test := range tests {
+		allErrs := validateActionReturn(test, field.NewPath("return"))
+		if len(allErrs) == 0 {
+			t.Errorf("validateActionReturn(%v) returned no errors for invalid input", test)
 		}
 	}
 }

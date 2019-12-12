@@ -2809,11 +2809,6 @@ func TestValidateActionReturnFails(t *testing.T) {
 			Type: `application/"json"`,
 			Body: "Hello World",
 		},
-		{
-			Code: 200,
-			Type: `application/"json"`,
-			Body: "Hello World",
-		},
 	}
 
 	for _, test := range tests {

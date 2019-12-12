@@ -115,7 +115,7 @@ server {
 
         {{ with $l.Return }}
             {{ if $l.DefaultType }}
-        default_type {{ $l.DefaultType }};
+        default_type "{{ $l.DefaultType }}";
             {{ end }}
         return {{ .Code }} "{{ .Text }}";
         {{ end }}
